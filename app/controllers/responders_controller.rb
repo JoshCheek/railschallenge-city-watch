@@ -26,9 +26,9 @@ class RespondersController < ApplicationController
   end
 
   def update
-    responder_params   = params.require(:responder).permit(:type, :name, :capacity)
+    responder_params   = params.require(:responder).permit(:on_duty)
     unpermitted_params = unpermitted_params(responder_params)
-    responder = Emergency.find_by code: params[:code]
+    responder = Responder.find_by name: params[:name]
 
     if unpermitted_params.any?
       render status: :unprocessable_entity,
