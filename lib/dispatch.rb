@@ -8,12 +8,9 @@ class Dispatch
   end
 
   def call
-    @dispatched ||= @emergency.each_type.with_object [] do |(type, severity), dispatched|
-      for_type    = responders_for type
-      by_capacity = by_relative_capacity for_type, severity
-      if by_capacity[:exact].any?
-        dispatched << by_capacity[:exact].first
-      end
+    @dispatched ||= @emergency.each_type.reduce [] do |dispatched, (type, severity)|
+      for_type = responders_for(type)
+      dispatched.concat find_match(for_type, severity)
     end
   end
 
@@ -23,11 +20,11 @@ class Dispatch
     @all_responders.select { |r| r.type? type }
   end
 
-  def by_relative_capacity(responders, severity)
-    mapping = { -1 => :deficit, 0 => :exact, 1 => :surplus }
-    responders.each_with_object deficit: [], exact: [], surplus: [] do |responder, mapped|
-      key = mapping[severity <=> responder.capacity]
-      mapped[key] << responder
+  def find_match(responders, severity)
+    0.upto responders.length do |num_responders|
+      responders.combination num_responders do |to_respond|
+        return to_respond if to_respond.map(&:capacity).inject(0, :+) == severity
+      end
     end
   end
 end
