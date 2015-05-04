@@ -1,5 +1,4 @@
 class EmergenciesController < ApplicationController
-
   def index
     render json: { emergencies: Emergency.all }
   end
@@ -21,12 +20,8 @@ class EmergenciesController < ApplicationController
 
   def update
     emergency_params = params!.require(:emergency).permit(:fire_severity, :police_severity, :medical_severity)
-    emergency        = Emergency.find params[:code]
-
-    if emergency.update_attributes emergency_params
-      render json: { emergency: emergency }
-    else
-      raise 'unhandled'
-    end
+    emergency = Emergency.find params[:code]
+    emergency.update_attributes emergency_params
+    render json: { emergency: emergency }
   end
 end
