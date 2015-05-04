@@ -24,7 +24,7 @@ class EmergenciesController < ApplicationController
 
   def show
     emergency = Emergency.find_by code: params[:code]
-    return render status: :not_found, json: {} unless emergency
+    return not_found! unless emergency
     render json: { emergency: emergency }
   end
 
