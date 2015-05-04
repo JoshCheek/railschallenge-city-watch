@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  # get    '/emergencies'          => 'emergencies#index', as: :emergencies
+  get    '/emergencies'          => 'emergencies#index', as: :emergencies
   post   '/emergencies'          => 'emergencies#create'
   # get    '/emergencies/new'      => 'emergencies#new',   as: :new_emergency
   # get    '/emergencies/:id/edit' => 'emergencies#edit',  as: :edit_emergency

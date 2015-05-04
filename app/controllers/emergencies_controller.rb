@@ -1,9 +1,4 @@
 class EmergenciesController < ApplicationController
-  def index
-    require "pry"
-    binding.pry
-  end
-
   class Emergency < ActiveRecord::Base
     establish_connection adapter: 'sqlite3', database: ':memory:'
     connection.create_table table_name do |t|
@@ -18,6 +13,10 @@ class EmergenciesController < ApplicationController
               numericality: { greater_than_or_equal_to: 0 }
 
     validates :code, uniqueness: true, presence: true
+  end
+
+  def index
+    render json: { emergencies: Emergency.all }
   end
 
   def create
@@ -35,33 +34,33 @@ class EmergenciesController < ApplicationController
     end
   end
 
-  def new
-    require "pry"
-    binding.pry
-  end
+#   def new
+#     require "pry"
+#     binding.pry
+#   end
 
-  def edit
-    require "pry"
-    binding.pry
-  end
+#   def edit
+#     require "pry"
+#     binding.pry
+#   end
 
-  def show
-    require "pry"
-    binding.pry
-  end
+#   def show
+#     require "pry"
+#     binding.pry
+#   end
 
-  def update
-    require "pry"
-    binding.pry
-  end
+#   def update
+#     require "pry"
+#     binding.pry
+#   end
 
-  def update
-    require "pry"
-    binding.pry
-  end
+#   def update
+#     require "pry"
+#     binding.pry
+#   end
 
-  def destroy
-    require "pry"
-    binding.pry
-  end
+#   def destroy
+#     require "pry"
+#     binding.pry
+#   end
 end
