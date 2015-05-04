@@ -5,9 +5,7 @@ class EmergenciesController < ApplicationController
   end
 
   def show
-    emergency = Emergency.find_by code: params[:code]
-    return not_found! unless emergency
-    render json: { emergency: emergency }
+    render json: { emergency: Emergency.find(params[:code]) }
   end
 
   def create
@@ -28,7 +26,7 @@ class EmergenciesController < ApplicationController
   def update
     emergency_params   = params.require(:emergency).permit(:fire_severity, :police_severity, :medical_severity)
     unpermitted_params = unpermitted_params(emergency_params)
-    emergency = Emergency.find_by code: params[:code]
+    emergency = Emergency.find params[:code]
 
     if unpermitted_params.any?
       render status: :unprocessable_entity,

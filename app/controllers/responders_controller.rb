@@ -9,9 +9,7 @@ class RespondersController < ApplicationController
   end
 
   def show
-    responder = Responder.find_by name: params[:name]
-    return not_found! unless responder
-    render json: { responder: responder }
+    render json: { responder: Responder.find(params[:name]) }
   end
 
   def create
@@ -32,7 +30,7 @@ class RespondersController < ApplicationController
   def update
     responder_params   = params.require(:responder).permit(:on_duty)
     unpermitted_params = unpermitted_params(responder_params)
-    responder = Responder.find_by name: params[:name]
+    responder = Responder.find params[:name]
 
     if unpermitted_params.any?
       render status: :unprocessable_entity,
