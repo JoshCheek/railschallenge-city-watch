@@ -30,22 +30,11 @@ class Responder < ActiveRecord::Base
     }
   end
 
-  # not currently assigned to an emergency
   def available?
     !emergency_code
   end
 
   def type?(type)
     self.type == type
-  end
-
-  # TODO: can I delete this?
-  def as_json(*)
-    { emergency_code: emergency_code,
-      type:           type,
-      name:           name,
-      capacity:       capacity,
-      on_duty:        on_duty,
-    }
   end
 end
