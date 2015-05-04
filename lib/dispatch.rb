@@ -20,6 +20,7 @@ class Dispatch
   end
 
   def find_match(severity, responders)
+    return [] if severity.zero?
     Array [
       find_exact_match(severity, responders),
       responders.select { |r| r.capacity > severity }
@@ -57,7 +58,6 @@ end
 
 
 class Dispatch::Responder
-
   attr_accessor :type, :capacity
 
   def initialize(type:, capacity:)

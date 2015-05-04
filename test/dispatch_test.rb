@@ -118,4 +118,10 @@ class DispatchTest < Minitest::Spec
                 responders: [{capacity: 1}, {capacity: 3}],
                 dispatched: [{capacity: 3}]
   end
+
+  it 'dispatches no one when there is no severity' do
+    dispatches! emergency:  [{severity: 0}],
+                responders: [{capacity: 1}],
+                dispatched: []
+  end
 end
