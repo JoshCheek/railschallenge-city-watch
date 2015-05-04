@@ -31,6 +31,7 @@ class DispatchTest < Minitest::Spec
       end
     end
     index = actuals.index { |a| a.equal? actual }
+    return unless index
     actuals.delete_at index
     actual
   end

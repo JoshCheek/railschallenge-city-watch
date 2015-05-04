@@ -9,8 +9,7 @@ class Dispatch
 
   def call
     @dispatched ||= @emergency.each_type.reduce [] do |dispatched, (type, severity)|
-      for_type = responders_for(type)
-      dispatched.concat find_match(for_type, severity)
+      dispatched.concat find_match(severity, responders_for(type))
     end
   end
 
@@ -20,15 +19,23 @@ class Dispatch
     @all_responders.select { |r| r.type? type }
   end
 
-  def find_match(responders, severity)
+  def find_match(severity, responders)
+    Array [
+      find_exact_match(severity, responders),
+      responders.select { |r| r.capacity > severity }
+                .sort_by(&:capacity)
+                .take(1),
+      responders,
+    ].find(&:any?)
+  end
+
+  def find_exact_match(severity, responders)
     0.upto responders.length do |num_responders|
       responders.combination num_responders do |to_respond|
         return to_respond if to_respond.map(&:capacity).inject(0, :+) == severity
       end
     end
-    surplus_Responders = responders.select { |r| r.capacity > severity }
-    return responders unless surplus_Responders.any?
-    [surplus_Responders.min_by(&:capacity)]
+    []
   end
 end
 
