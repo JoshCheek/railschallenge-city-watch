@@ -23,9 +23,8 @@ class RespondersController < ApplicationController
   end
 
   def update
-    responder_params = params!.require(:responder).permit(:on_duty)
-    responder        = Responder.find params[:name]
-    responder.update_attributes responder_params
+    responder = Responder.find params[:name]
+    responder.update_attributes(params!.require(:responder).permit(:on_duty))
     render json: { responder: responder }
   end
 end
