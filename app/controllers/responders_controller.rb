@@ -1,7 +1,7 @@
 class RespondersController < ApplicationController
 
   def index
-    render json: { emergencies: Responder.all }
+    render json: { responders: Responder.all }
   end
 
   def show
