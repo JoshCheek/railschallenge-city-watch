@@ -124,4 +124,10 @@ class DispatchTest < Minitest::Spec
                 responders: [{capacity: 1}],
                 dispatched: []
   end
+
+  it 'assumes a severity of 0 when there is no severity provided for the type' do
+    dispatches! emergency:  [{type: 'a'}],
+                responders: [{type: 'a', capacity: 1}],
+                dispatched: []
+  end
 end

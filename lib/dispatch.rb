@@ -20,7 +20,7 @@ class Dispatch
   end
 
   def find_match(severity, responders)
-    return [] if severity.zero?
+    return [] if !severity || severity.zero?
     Array [
       find_exact_match(severity, responders),
       responders.select { |r| r.capacity > severity }
