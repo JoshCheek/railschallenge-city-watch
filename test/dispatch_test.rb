@@ -102,9 +102,19 @@ class DispatchTest < Minitest::Spec
                 dispatched: [{capacity: 4}]
   end
 
-  it 'assigns no responders when there are none to assign' do
+  it 'dispatches no responders when there are none to assign' do
     dispatches! emergency:  [{severity: 1}], responders: [], dispatched: []
   end
 
-  # chooses deficits that get closest to the exact
+  it 'dispatches everyone of that type, when there is a deficit' do
+    dispatches! emergency:  [{severity: 4}],
+                responders: [{capacity: 1}, {capacity: 2}],
+                dispatched: [{capacity: 1}, {capacity: 2}]
+  end
+
+  it 'dispatched the surplus responder, not the deficit responder, when there is no exact match' do
+    dispatches! emergency:  [{severity: 2}],
+                responders: [{capacity: 1}, {capacity: 3}],
+                dispatched: [{capacity: 3}]
+  end
 end

@@ -27,7 +27,7 @@ class Dispatch
       end
     end
     surplus_Responders = responders.select { |r| r.capacity > severity }
-    return [] unless surplus_Responders.any?
+    return responders unless surplus_Responders.any?
     [surplus_Responders.min_by(&:capacity)]
   end
 end
