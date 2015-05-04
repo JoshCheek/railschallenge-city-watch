@@ -17,7 +17,7 @@ class EmergenciesController < ApplicationController
               presence:     true,
               numericality: { greater_than_or_equal_to: 0 }
 
-    validates :code, uniqueness: true
+    validates :code, uniqueness: true, presence: true
   end
 
   def create
