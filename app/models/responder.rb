@@ -6,10 +6,10 @@ class Responder < ActiveRecord::Base
   validates :type,     presence: true
   validates :name,     presence: true, uniqueness: true
 
-  belongs_to :emergency
+  belongs_to :emergency, foreign_key: :emergency_code
 
   def self.available
-    where on_duty: true
+    where on_duty: true, emergency_code: nil
   end
 
   # TODO: extract

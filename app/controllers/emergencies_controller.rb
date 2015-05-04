@@ -2,7 +2,13 @@ require 'dispatch'
 
 class EmergenciesController < ApplicationController
   def index
-    render json: { emergencies: Emergency.all }
+    emergencies = Emergency.all.to_a
+
+    render json: {
+      emergencies:    emergencies,
+      full_responses: [emergencies.count(&:full_response?),
+                       emergencies.count]
+    }
   end
 
   def show
@@ -14,7 +20,8 @@ class EmergenciesController < ApplicationController
 
     emergency = Emergency.new emergency_params do |emergency|
       available_responders = Responder.available
-      emergency.responders = Dispatch(emergency, available_responders)
+      to_dispatch          = Dispatch(emergency, available_responders)
+      emergency.responders.concat to_dispatch
     end
 
     if emergency.save
