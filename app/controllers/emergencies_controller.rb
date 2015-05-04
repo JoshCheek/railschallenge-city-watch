@@ -1,3 +1,5 @@
+require 'dispatch'
+
 class EmergenciesController < ApplicationController
   def index
     render json: { emergencies: Emergency.all }
@@ -9,7 +11,11 @@ class EmergenciesController < ApplicationController
 
   def create
     emergency_params = params!.require(:emergency).permit(:code, :fire_severity, :police_severity, :medical_severity)
-    emergency = Emergency.new emergency_params
+
+    emergency = Emergency.new emergency_params do |emergency|
+      available_responders = Responder.available
+      emergency.responders = Dispatch(emergency, available_responders)
+    end
 
     if emergency.save
       render status: :created, json: { emergency: emergency }

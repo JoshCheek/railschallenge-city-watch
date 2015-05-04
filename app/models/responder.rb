@@ -6,6 +6,13 @@ class Responder < ActiveRecord::Base
   validates :type,     presence: true
   validates :name,     presence: true, uniqueness: true
 
+  belongs_to :emergency
+
+  def self.available
+    where on_duty: true
+  end
+
+  # TODO: extract
   def self.capacity_counts
     responders = all.to_a
 
