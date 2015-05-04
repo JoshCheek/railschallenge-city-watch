@@ -12,13 +12,18 @@ class EmergenciesController < ApplicationController
       t.integer :police_severity,  default: 0, null: false
       t.integer :medical_severity, default: 0, null: false
     end
+
+    validates :fire_severity, :police_severity, :medical_severity, numericality: { greater_than_or_equal_to: 0}
   end
 
   def create
     emergency_params = params.require(:emergency).permit(:code, :fire_severity, :police_severity, :medical_severity)
     emergency = Emergency.new(emergency_params)
-    emergency.save!
-    render status: :created, json: { emergency: emergency.as_json }
+    if emergency.save
+      render status: :created, json: { emergency: emergency.as_json }
+    else
+      render status: :unprocessable_entity, json: { message: emergency.errors.as_json}
+    end
   end
 
   def new
