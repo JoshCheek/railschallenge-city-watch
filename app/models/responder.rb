@@ -2,7 +2,7 @@ class Responder < ActiveRecord::Base
   establish_connection adapter: 'sqlite3', database: ':memory:'
 
   # TODO: migration
-  connection.create_table table_name do |t|
+  connection.create_table table_name, id: false do |t|
     t.string  :type
     t.string  :name
     t.integer :capacity
@@ -10,7 +10,9 @@ class Responder < ActiveRecord::Base
     t.boolean :on_duty, default: false
   end
 
+  self.primary_key        = :name
   self.inheritance_column = nil
+
   validates :capacity, presence: true, inclusion: { in: 1..5 }
   validates :type,     presence: true
   validates :name,     presence: true, uniqueness: true

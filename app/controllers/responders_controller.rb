@@ -5,7 +5,7 @@ class RespondersController < ApplicationController
   end
 
   def show
-    responder = Responder.find_by code: params[:code]
+    responder = Responder.find_by name: params[:name]
     return not_found! unless responder
     render json: { responder: responder }
   end

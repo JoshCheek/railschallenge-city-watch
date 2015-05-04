@@ -6,8 +6,8 @@ Rails.application.routes.draw do
 
   get   '/responders'        => 'responders#index'
   post  '/responders'        => 'responders#create'
-  get   '/responders/:code'  => 'responders#show'
-  patch '/responders/:code'  => 'responders#update'
+  get   '/responders/:name'  => 'responders#show'
+  patch '/responders/:name'  => 'responders#update'
 
   match '*_' => 'application#not_found!', via: :all
 end
