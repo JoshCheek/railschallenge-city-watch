@@ -31,6 +31,10 @@ class DispatchTest < Minitest::Spec
     end
   end
 
+  # chooses the closest surplus
+  # chooses the fewest deficits to match
+  # chooses deficits that get closest tot he exact
+
   it 'dispatches responders for the given type' do
     dispatches! emergency:  [{type: 'a', severity: 1}],
                 responders: [{type: 'a', capacity: 1}, {type: 'b', capacity: 1}],
@@ -48,12 +52,14 @@ class DispatchTest < Minitest::Spec
   end
 
   it 'dispatches responders until the emergency has a full response' do
+    skip
     dispatches! emergency:  [{severity: 2}],
                 responders: [{capacity: 1}, {capacity: 1}, {capacity: 1}],
                 dispatched: [{capacity: 1}, {capacity: 1}]
   end
 
   it 'chooses responders whose capcity matches the severity before responders with surplus capacity' do
+    skip
     dispatches! emergency:  [{severity: 2}],
                 responders: [{capacity: 2}, {capacity: 3}],
                 dispatched: [{capacity: 2}]
@@ -64,6 +70,7 @@ class DispatchTest < Minitest::Spec
   end
 
   it 'chooses responders whose capacity matches the severity before responders with a deficit of capacity' do
+    skip
     dispatches! emergency:  [{severity: 2}],
                 responders: [{capacity: 2}, {capacity: 1}],
                 dispatched: [{capacity: 2}]
@@ -74,6 +81,7 @@ class DispatchTest < Minitest::Spec
   end
 
   it 'given multiple ways to get to a capacity, it opts for fewer responders, so that future emergencies will have options' do
+    skip
     dispatches! emergency:  [{severity: 3}],
                 responders: [{capacity: 1}, {capacity: 2}, {capacity: 3}, {capacity: 4}],
                 dispatched: [{capacity: 3}]
