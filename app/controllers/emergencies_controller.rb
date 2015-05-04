@@ -18,12 +18,17 @@ class EmergenciesController < ApplicationController
   end
 
   def create
-    emergency_params = params.require(:emergency).permit(:code, :fire_severity, :police_severity, :medical_severity)
-    emergency = Emergency.new(emergency_params)
-    if emergency.save
+    emergency_params   = params.require(:emergency).permit(:code, :fire_severity, :police_severity, :medical_severity)
+    unpermitted_params = params[:emergency].keys - emergency_params.keys
+    emergency          = Emergency.new(emergency_params)
+
+    if unpermitted_params.any?
+      render status: :unprocessable_entity,
+             json: { message: "found unpermitted parameter: #{unpermitted_params.join ', '}" }
+    elsif emergency.save
       render status: :created, json: { emergency: emergency.as_json }
     else
-      render status: :unprocessable_entity, json: { message: emergency.errors.as_json}
+      render status: :unprocessable_entity, json: { message: emergency.errors.as_json }
     end
   end
 
