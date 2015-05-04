@@ -1,7 +1,11 @@
 class RespondersController < ApplicationController
 
   def index
-    render json: { responders: Responder.all }
+    if params[:show] == 'capacity'
+      render json: { capacity: Responder.capacity_counts }
+    else
+      render json: { responders: Responder.all }
+    end
   end
 
   def show
