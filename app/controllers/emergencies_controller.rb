@@ -7,13 +7,14 @@ class EmergenciesController < ApplicationController
   class Emergency < ActiveRecord::Base
     establish_connection adapter: 'sqlite3', database: ':memory:'
     connection.create_table table_name do |t|
-      t.string :code
+      t.string  :code
       t.integer :fire_severity,    default: 0, null: false
       t.integer :police_severity,  default: 0, null: false
       t.integer :medical_severity, default: 0, null: false
     end
 
     validates :fire_severity, :police_severity, :medical_severity, numericality: { greater_than_or_equal_to: 0}
+    validates :code, uniqueness: true
   end
 
   def create
