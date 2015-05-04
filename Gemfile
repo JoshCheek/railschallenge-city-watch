@@ -3,8 +3,6 @@ source 'https://rubygems.org'
 gem 'rails', '4.2.1'
 gem 'sqlite3', '1.3.10'
 
-gem 'jbuilder', '~> 2.0'
-
 group :development, :test do
   gem 'pry'
   gem 'rubocop', '0.30.0'
