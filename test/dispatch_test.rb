@@ -1,10 +1,35 @@
-require 'minitest/autorun' unless defined? Minitest # so this file can be run directly, without loading Rails
-require 'minitest/spec'
+# Setup so that this file can be run directly, without loading Rails
+# If there winds up being more classes than just this one, then move it out to a common helper
+require 'minitest/autorun' unless defined? Minitest
+libdir = File.expand_path('../lib', __dir__)
+$:.unshift libdir unless $LOAD_PATH.include? libdir
 
-class DispatchRespondersTest < Minitest::Spec
+
+require 'minitest/spec'
+require 'dispatch'
+
+class DispatchTest < Minitest::Spec
   # there should probably be a heuristic at some point, e.g. severity=100, responder1-100 have capacity of 1, responder 101 has capacity of 101.
   # the described algorithm would choose responders 1 through 100, but if the next two emergencies have severity of 1, the second one will not have enough responders to be addressed.
   # but if we instead dispatch the 101 responder, then we could handle any number of emergencies until their cumulative severity exceeds 100.
+  def dispatches!(emergency:, responders:, dispatched:)
+    [*emergency, *responders].each { |hash| hash[:type] ||= 'sometype' }
+    emergency  = Dispatch::Emergency.new emergency
+    responders = responders.map { |responder| Dispatch::Responder.new responder }
+    actuals    = Dispatch emergency, responders
+    dispatched.each do |expected|
+      responder = find_dispatched actuals, expected
+      assert responder, "Expected #{expected.inspect} to be in #{actuals.inspect}"
+    end
+  end
+
+  def find_dispatched(actuals, expected)
+    actuals.find do |actual|
+      expected.all? do |attribute, value|
+        actual.__send__(attribute) == value
+      end
+    end
+  end
 
   it 'dispatches responders for the given type' do
     dispatches! emergency:  [{type: 'a', severity: 1}],
