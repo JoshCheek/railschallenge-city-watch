@@ -22,10 +22,14 @@ class EmergenciesController < ApplicationController
     render json: { emergencies: Emergency.all }
   end
 
+  def show
+    emergency = Emergency.find_by code: params[:code]
+    return render status: :not_found, json: {} unless emergency
+    render json: {emergency: emergency}
+  end
+
   def create
-    emergency_params   = params.require(:emergency).permit(:code, :fire_severity, :police_severity, :medical_severity)
-    unpermitted_params = params[:emergency].keys - emergency_params.keys
-    emergency          = Emergency.new(emergency_params)
+    emergency = Emergency.new(emergency_params)
 
     if unpermitted_params.any?
       render status: :unprocessable_entity,
@@ -37,34 +41,18 @@ class EmergenciesController < ApplicationController
     end
   end
 
-#   def new
-#     require "pry"
-#     binding.pry
-#   end
+  # def update
+  #   require "pry"
+  #   binding.pry
+  # end
 
-#   def edit
-#     require "pry"
-#     binding.pry
-#   end
+  private
 
-  def show
-    emergency = Emergency.find_by code: params[:code]
-    return render status: :not_found, json: {} unless emergency
-    render json: {emergency: emergency}
+  def emergency_params
+    params.require(:emergency).permit(:code, :fire_severity, :police_severity, :medical_severity)
   end
 
-#   def update
-#     require "pry"
-#     binding.pry
-#   end
-
-#   def update
-#     require "pry"
-#     binding.pry
-#   end
-
-#   def destroy
-#     require "pry"
-#     binding.pry
-#   end
+  def unpermitted_params
+    params[:emergency].keys - emergency_params.keys
+  end
 end
