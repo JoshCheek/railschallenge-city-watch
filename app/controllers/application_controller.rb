@@ -1,14 +1,4 @@
-module ActionController
-  class StrictParameters < Parameters
-    # Parameters uses global configuration stored in a class variable...
-    # What if I need an engine at some point?
-    # What if I have controllers that want to treat this differently?
-    # ...so doing it this wonky ass way, instead
-    def self.action_on_unpermitted_parameters
-      :raise
-    end
-  end
-end
+require 'exceptional_parameters'
 
 class ApplicationController < ActionController::Base
   def not_found!
@@ -26,6 +16,6 @@ class ApplicationController < ActionController::Base
   private
 
   def params!
-    @params ||= ActionController::StrictParameters.new params
+    @params ||= ExceptionalParameters.new params
   end
 end
