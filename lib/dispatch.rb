@@ -26,11 +26,16 @@ class Dispatch
         return to_respond if to_respond.map(&:capacity).inject(0, :+) == severity
       end
     end
+    surplus_Responders = responders.select { |r| r.capacity > severity }
+    return [] unless surplus_Responders.any?
+    [surplus_Responders.min_by(&:capacity)]
   end
 end
 
+
 class Dispatch::Emergency
   attr_accessor :attrs_by_type
+
   def initialize(attrs_by_type)
     self.attrs_by_type = attrs_by_type
   end
@@ -43,8 +48,11 @@ class Dispatch::Emergency
   end
 end
 
+
 class Dispatch::Responder
+
   attr_accessor :type, :capacity
+
   def initialize(type:, capacity:)
     self.type, self.capacity = type, capacity
   end

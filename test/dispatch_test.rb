@@ -13,27 +13,27 @@ class DispatchTest < Minitest::Spec
   # the described algorithm would choose responders 1 through 100, but if the next two emergencies have severity of 1, the second one will not have enough responders to be addressed.
   # but if we instead dispatch the 101 responder, then we could handle any number of emergencies until their cumulative severity exceeds 100.
   def dispatches!(emergency:, responders:, dispatched:)
+    # fill in defaults
     [*emergency, *responders].each { |hash| hash[:type] ||= 'sometype' }
-    emergency  = Dispatch::Emergency.new emergency
-    responders = responders.map { |responder| Dispatch::Responder.new responder }
-    actuals    = Dispatch emergency, responders
+    actuals = Dispatch Dispatch::Emergency.new(emergency),
+                       responders.map { |r| Dispatch::Responder.new r }
     dispatched.each do |expected|
-      responder = find_dispatched actuals, expected
+      responder = delete_dispatched actuals, expected
       assert responder, "Expected #{expected.inspect} to be in #{actuals.inspect}"
     end
+    assert_equal 0, actuals.length, "Expected all the responders to be accounted for, but there are still: #{actuals.inspect}"
   end
 
-  def find_dispatched(actuals, expected)
-    actuals.find do |actual|
+  def delete_dispatched(actuals, expected)
+    actual = actuals.find do |actual|
       expected.all? do |attribute, value|
         actual.__send__(attribute) == value
       end
     end
+    index = actuals.index { |a| a.equal? actual }
+    actuals.delete_at index
+    actual
   end
-
-  # chooses the closest surplus
-  # chooses the fewest deficits to match
-  # chooses deficits that get closest tot he exact
 
   it 'dispatches responders for the given type' do
     dispatches! emergency:  [{type: 'a', severity: 1}],
@@ -90,4 +90,21 @@ class DispatchTest < Minitest::Spec
                 responders: [{capacity: 1}, {capacity: 1}, {capacity: 1}, {capacity: 2}, {capacity: 4}],
                 dispatched: [{capacity: 1}, {capacity: 2}]
   end
+
+
+  it 'when choosing a surplus, it cooses the closest' do
+    dispatches! emergency:  [{severity: 3}],
+                responders: [{capacity: 4}, {capacity: 5}],
+                dispatched: [{capacity: 4}]
+
+    dispatches! emergency:  [{severity: 3}],
+                responders: [{capacity: 5}, {capacity: 4}],
+                dispatched: [{capacity: 4}]
+  end
+
+  it 'assigns no responders when there are none to assign' do
+    dispatches! emergency:  [{severity: 1}], responders: [], dispatched: []
+  end
+
+  # chooses deficits that get closest to the exact
 end
