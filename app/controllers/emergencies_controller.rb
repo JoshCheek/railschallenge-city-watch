@@ -26,8 +26,12 @@ class EmergenciesController < ApplicationController
   end
 
   def update
+    emergency_params = params!.require(:emergency).permit(:fire_severity, :police_severity, :medical_severity, :resolved_at)
+    if emergency_params[:resolved_at]
+      emergency_params[:responders] = []
+    end
     emergency = Emergency.find params[:code]
-    emergency.update_attributes(params!.require(:emergency).permit(:fire_severity, :police_severity, :medical_severity))
+    emergency.update_attributes emergency_params
     render json: { emergency: emergency }
   end
 end
