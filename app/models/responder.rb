@@ -6,7 +6,9 @@ class Responder < ActiveRecord::Base
   validates :type,     presence: true
   validates :name,     presence: true, uniqueness: true
 
-  belongs_to :emergency, foreign_key: :emergency_code
+  belongs_to :emergency,                    foreign_key: :emergency_code
+  has_many   :emergency_responder_archives, foreign_key: :responder_name
+  has_many   :archived_emergencies,         through: :emergency_responder_archives, source: :emergency
 
   def self.available
     where on_duty: true, emergency_code: nil

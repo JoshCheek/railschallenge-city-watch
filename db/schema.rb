@@ -21,9 +21,14 @@ ActiveRecord::Schema.define(version: 20150504055930) do
     t.datetime "resolved_at"
   end
 
+  create_table "emergency_responder_archives", force: :cascade do |t|
+    t.string "emergency_code"
+    t.string "responder_name"
+  end
+
   create_table "responders", id: false, force: :cascade do |t|
-    t.string  "type"
     t.string  "name"
+    t.string  "type"
     t.integer "capacity"
     t.string  "emergency_code"
     t.boolean "on_duty",        default: false

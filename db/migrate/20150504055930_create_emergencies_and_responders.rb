@@ -8,9 +8,14 @@ class CreateEmergenciesAndResponders < ActiveRecord::Migration
       t.datetime :resolved_at
     end
 
+    create_table :emergency_responder_archives do |t|
+      t.string :emergency_code
+      t.string :responder_name
+    end
+
     create_table :responders, id: false do |t|
-      t.string  :type
       t.string  :name
+      t.string  :type
       t.integer :capacity
       t.string  :emergency_code
       t.boolean :on_duty, default: false

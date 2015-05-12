@@ -7,7 +7,9 @@ class Emergency < ActiveRecord::Base
 
   validates :code, uniqueness: true, presence: true
 
-  has_many :responders, foreign_key: :emergency_code
+  has_many :responders,                   foreign_key: :emergency_code
+  has_many :emergency_responder_archives, foreign_key: :emergency_code
+  has_many :archived_responders,          through: :emergency_responder_archives, source: :responder
 
   def each_type
     [ ['Fire',    fire_severity   ],
@@ -22,7 +24,7 @@ class Emergency < ActiveRecord::Base
   end
 
   def full_response?
-    responders = self.responders
+    responders = archived_responders.to_a
     each_type.all? do |type, severity|
       severity <= responders.select { |r| r.type? type }
                             .inject(0) { |s, r| s + r.capacity }

@@ -16,7 +16,9 @@ class EmergenciesController < ApplicationController
 
   def create
     emergency_params = params!.require(:emergency).permit(:code, :fire_severity, :police_severity, :medical_severity)
-    emergency        = Emergency.new(emergency_params) { |e| e.responders = Dispatch e, Responder.available }
+    emergency        = Emergency.new emergency_params do |e|
+      e.archived_responders = e.responders = Dispatch e, Responder.available
+    end
 
     if emergency.save
       render status: :created, json: { emergency: emergency }
