@@ -21,13 +21,14 @@ class Dispatch
 
   def find_match(severity, responders)
     return [] if !severity || severity.zero?
-    Array [
-      find_exact_match(severity, responders),
-      responders.select { |r| r.capacity > severity }
-                .sort_by(&:capacity)
-                .take(1),
-      responders,
-    ].find(&:any?)
+
+    exact = find_exact_match(severity, responders)
+    return exact if exact.any?
+
+    over = responders.select { |r| severity < r.capacity }.min_by(&:capacity)
+    return [over] if over
+
+    responders
   end
 
   def find_exact_match(severity, responders)
