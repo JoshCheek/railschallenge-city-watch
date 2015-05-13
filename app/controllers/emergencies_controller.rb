@@ -2,11 +2,11 @@ require 'dispatch'
 
 class EmergenciesController < ApplicationController
   def index
-    emergencies = Emergency.all.to_a
+    emergencies = Emergency.includes(:responders, :archived_responders).to_a
 
     render json: {
       emergencies:    emergencies,
-      full_responses: [emergencies.count(&:full_response?), emergencies.count]
+      full_responses: [emergencies.count(&:full_response?), emergencies.length]
     }
   end
 
@@ -15,8 +15,9 @@ class EmergenciesController < ApplicationController
   end
 
   def create
-    emergency_params = params!.require(:emergency).permit(:code, :fire_severity, :police_severity, :medical_severity)
-    emergency        = Emergency.new emergency_params do |e|
+    eparams = params!.require(:emergency).permit(:code, :fire_severity, :police_severity, :medical_severity)
+
+    emergency = Emergency.new eparams do |e|
       e.archived_responders = e.responders = Dispatch e, Responder.available
     end
 
@@ -28,12 +29,10 @@ class EmergenciesController < ApplicationController
   end
 
   def update
-    emergency_params = params!.require(:emergency).permit(:fire_severity, :police_severity, :medical_severity, :resolved_at)
-    if emergency_params[:resolved_at]
-      emergency_params[:responders] = []
-    end
+    eparams = params!.require(:emergency).permit(:fire_severity, :police_severity, :medical_severity, :resolved_at)
+    eparams[:responders] = [] if eparams[:resolved_at]
     emergency = Emergency.find params[:code]
-    emergency.update_attributes emergency_params
+    emergency.update_attributes eparams
     render json: { emergency: emergency }
   end
 end
